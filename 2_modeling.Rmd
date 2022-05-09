@@ -1,0 +1,80 @@
+---
+title: "2. Modeling"
+output: html_notebook
+---
+
+```{r}
+# load libraries
+library(tidyverse)
+library(ggplot2)
+library(broom)
+library(tidyr)
+```
+
+```{r}
+# data load function
+load_data <- function(year) {
+  
+  # load data
+  gunviol_data <- read_csv(sprintf('data/complete/GunViolenceByCounty_%d.csv', year))
+  
+  # drop rows with NA's
+  gunviol_data <- gunviol_data[complete.cases(gunviol_data), ]
+  gunviol_data[!complete.cases(gunviol_data), ]
+  
+  # filter to counties with certain amount of popoulation
+  gunviol_data <- gunviol_data[gunviol_data$TOT_POP >= 0, ]
+  
+  # print columns and row counts
+  names(gunviol_data)
+  nrow(gunviol_data)
+  
+  return(gunviol_data)
+}
+
+```
+
+
+```{r}
+# main loop
+years = c(2014, 2015, 2016, 2017)
+data_list = list()
+models = list()
+
+for(year in years) {
+  
+  # load data
+  print(sprintf("LOADING DATA FOR %d", year))
+  gunviol_data <- load_data(year)
+  
+  # fit GLM
+  model_gunviol = glm(killed_per_100k ~ 
+                      PVI_2016 + 
+                      perc_NHWA + 
+                      perc_NHNA + 
+                      perc_NHBA + 
+                      perc_HISP + 
+                      Edu_perc_NoHS + 
+                      Econ_perc_poverty + 
+                      Unemployment_rate, 
+                      data=gunviol_data, weights=TOT_POP) 
+  summary(model_gunviol)
+  
+  # save model output
+  models = append(models, tidy(model_gunviol))
+  
+  # get residuals
+  model.res = resid(model_gunviol)
+  plot(gunviol_data$killed_per_100k, model.res, 
+      ylab="Residuals", xlab="Deaths per 100k", 
+       main="Residuals Plot")
+  abline(0, 0)  
+
+}
+
+```
+
+```{r}
+write.csv(models,"data/models/model_weights.csv", row.names = FALSE)
+```
+
