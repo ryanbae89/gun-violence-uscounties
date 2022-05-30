@@ -67,15 +67,37 @@ The actual gun violence data came from [Kaggle](https://www.kaggle.com/datasets/
 
 The modeling approach used was to try to predict the number of people killed in each county using a simple linear regression. The gun violence dataset was aggregated to calculate the number of people killed in each county. Also, to account for the population differences in each county, each data point (county) was weighted by its population.
 
-*Equation here*
-
-$$
-\beta
-$$
-
 In order to analyze how the importance of the above features changed over time (and to account for any seasonality in the data), the modeling was blocked by each year. There were 4 years where complete data was available, from 2014 to 2017.
 
 The resulting model coefficients and their p-values were plotted over time, year to year.
+
+For county $$i$$ in year $$j$$, number of people killed from gun violence per 100k is the following using linear regression:
+
+$$
+\hat{y}_{i, j} = \alpha_j + \beta_j x_{i, j}
+$$
+
+Where
+
+$$
+\beta_j = (\beta_{NHWA}, \beta_{NHBA}, \beta_{NHNA}, \beta_{hisp}, \beta_{poverty}, \beta_{unemployment}, \beta_{NoHS}, \beta_{PVI})_j
+$$
+
+$$
+x_{i, j} = (x_{i, NHWA}, x_{i, NHBA}, x_{i, NHNA}, x_{i, hisp} x_{i, poverty}, x_{i, unemployment}, x_{i, NoHS}, x_{i, PVI} )_j   
+$$
+
+For weighted linear regression, the cost function to minimize using ordinary least squares becomes the following:
+
+$$
+\sum_{i=1}^{n} w_{i, j}^2 \ ( y_{i, j} - ( \alpha_j + \beta_j x_{i, j} ) )^2
+$$
+
+Where
+
+$$
+w_{i,j} = county \ i \ population \ in \ year \ j
+$$
 
 ### Limitations
 
@@ -100,9 +122,32 @@ The demographic features were % of population in each county by race. The 4 feat
 | perc_NHWA  | Percent Non-Hispanic Black American |
 | perc_NHWA  | Percent Hispanic |
 
+The regression coefficients, standard errors, and their p-values are shown below:
+
+|    | index     |   year |   perc_NHWA |    perc_NHBA |   perc_NHNA |   perc_HISP |
+|---:|:----------|-------:|------------:|-------------:|------------:|------------:|
+|  0 | estimate  |   2014 | -0.00314285 |  0.153761    |   0.0249469 |  0.00973396 |
+|  1 | std.error |   2014 |  0.0152667  |  0.0154062   |   0.143483  |  0.0159739  |
+|  2 | statistic |   2014 | -0.205863   |  9.98046     |   0.173866  |  0.609367   |
+|  3 | p.value   |   2014 |  0.836921   |  7.42597e-23 |   0.861991  |  0.54236    |
+|  4 | estimate  |   2015 |  0.0245874  |  0.213713    |   0.273261  |  0.0298822  |
+|  5 | std.error |   2015 |  0.0165805  |  0.0167498   |   0.161144  |  0.0174026  |
+|  6 | statistic |   2015 |  1.48291    | 12.7591      |   1.69576   |  1.71712    |
+|  7 | p.value   |   2015 |  0.138262   |  7.56612e-36 |   0.0900942 |  0.0861192  |
+|  8 | estimate  |   2016 |  0.0170026  |  0.236146    |   0.373858  |  0.026114   |
+|  9 | std.error |   2016 |  0.0186636  |  0.0188445   |   0.17854   |  0.0197299  |
+| 10 | statistic |   2016 |  0.911006   | 12.5313      |   2.09397   |  1.32357    |
+| 11 | p.value   |   2016 |  0.362404   |  1.02644e-34 |   0.0363906 |  0.185799   |
+| 12 | estimate  |   2017 |  0.010636   |  0.228846    |   0.153797  |  0.00251736 |
+| 13 | std.error |   2017 |  0.0194242  |  0.01957     |   0.190652  |  0.0205425  |
+| 14 | statistic |   2017 |  0.547564   | 11.6937      |   0.806688  |  0.122544   |
+| 15 | p.value   |   2017 |  0.584053   |  1.35386e-30 |   0.419943  |  0.902481   |
+
 ![Plot 1](pictures/demographic_features.png)
 
 Regression coefficients show a clear statistical significance of one variable over time, **perc_NHBA**. One item to note here is that the perc_NHNA variable; the very large confidence interval of this coefficient is due to negligible Native-American population in most counties.
+
+The coefficient magnitudes shows that all else being equal, per 1% increase in non-hispanic black population, there is increase of roughly 0.2 deaths per 100k population per county.
 
 ### 2. Economic Features  
 
@@ -111,9 +156,32 @@ Regression coefficients show a clear statistical significance of one variable ov
 | Econ_perc_poverty  | Percent Below the Poverty Threshold |
 | Unemployment_rate  | Unemployment Rate |
 
+The regression coefficients, standard errors, and their p-values are shown below:
+
+|    | index     |   year |   Econ_perc_poverty |   Unemployment_rate |
+|---:|:----------|-------:|--------------------:|--------------------:|
+|  0 | estimate  |   2014 |         0.267873    |           0.031218  |
+|  1 | std.error |   2014 |         0.0258433   |           0.056949  |
+|  2 | statistic |   2014 |        10.3652      |           0.548174  |
+|  3 | p.value   |   2014 |         1.7784e-24  |           0.583642  |
+|  4 | estimate  |   2015 |         0.288876    |           0.0254343 |
+|  5 | std.error |   2015 |         0.0295123   |           0.0741257 |
+|  6 | statistic |   2015 |         9.78835     |           0.343124  |
+|  7 | p.value   |   2015 |         4.11388e-22 |           0.731542  |
+|  8 | estimate  |   2016 |         0.315022    |           0.0897241 |
+|  9 | std.error |   2016 |         0.0329617   |           0.0870357 |
+| 10 | statistic |   2016 |         9.55721     |           1.03089   |
+| 11 | p.value   |   2016 |         3.46114e-21 |           0.30272   |
+| 12 | estimate  |   2017 |         0.331917    |           0.10707   |
+| 13 | std.error |   2017 |         0.0354018   |           0.104869  |
+| 14 | statistic |   2017 |         9.37571     |           1.02098   |
+| 15 | p.value   |   2017 |         1.80956e-20 |           0.307386  |
+
 ![Plot 1](pictures/economic_features.png)
 
-Of the two economic features considered, only the **Econ_perc_poverty** variable had statistically significant positive coefficient value. This is largely in line with
+Of the two economic features considered, only the **Econ_perc_poverty** variable had statistically significant positive coefficient value.
+
+The coefficient magnitudes shows that all else being equal, per 1% increase in poverty, there is increase of roughly 0.3 deaths per 100k population per county.
 
 ### 3. Education Features  
 
@@ -121,9 +189,30 @@ Of the two economic features considered, only the **Econ_perc_poverty** variable
 |---|---|
 | Edu_perc_NoHS  | Percent with No High School Education |
 
+The regression coefficients, standard errors, and their p-values are shown below:
+
+|    | index     |   year |   Edu_perc_NoHS |
+|---:|:----------|-------:|----------------:|
+|  0 | estimate  |   2014 |     -0.0867682  |
+|  1 | std.error |   2014 |      0.0312553  |
+|  2 | statistic |   2014 |     -2.77611    |
+|  3 | p.value   |   2014 |      0.00555958 |
+|  4 | estimate  |   2015 |     -0.0907991  |
+|  5 | std.error |   2015 |      0.0347562  |
+|  6 | statistic |   2015 |     -2.61245    |
+|  7 | p.value   |   2015 |      0.00905953 |
+|  8 | estimate  |   2016 |     -0.0955807  |
+|  9 | std.error |   2016 |      0.037493   |
+| 10 | statistic |   2016 |     -2.5493     |
+| 11 | p.value   |   2016 |      0.0108694  |
+| 12 | estimate  |   2017 |     -0.0835212  |
+| 13 | std.error |   2017 |      0.0401907  |
+| 14 | statistic |   2017 |     -2.07812    |
+| 15 | p.value   |   2017 |      0.0378265  |
+
 ![Plot 1](pictures/education_features.png)
 
-Perhaps surprisingly, **Edu_perc_NoHS** variable had statistically significant **negative** coefficient each year. While common sense would
+Perhaps surprisingly, **Edu_perc_NoHS** variable had statistically significant **negative** coefficient each year.
 
 ### 4. Political Features  
 
@@ -131,11 +220,46 @@ Perhaps surprisingly, **Edu_perc_NoHS** variable had statistically significant *
 |---|---|
 | PVI_2016  | Partisan Voting Index (% Democratic Party Lean) |
 
+The regression coefficients, standard errors, and their p-values are shown below:
+
+|    | index     |   year |   PVI_2016 |
+|---:|:----------|-------:|-----------:|
+|  0 | estimate  |   2014 | 0.00350388 |
+|  1 | std.error |   2014 | 0.00367793 |
+|  2 | statistic |   2014 | 0.952676   |
+|  3 | p.value   |   2014 | 0.340885   |
+|  4 | estimate  |   2015 | 0.00607304 |
+|  5 | std.error |   2015 | 0.00411872 |
+|  6 | statistic |   2015 | 1.4745     |
+|  7 | p.value   |   2015 | 0.140512   |
+|  8 | estimate  |   2016 | 0.00547333 |
+|  9 | std.error |   2016 | 0.00448042 |
+| 10 | statistic |   2016 | 1.22161    |
+| 11 | p.value   |   2016 | 0.222001   |
+| 12 | estimate  |   2017 | 0.00803387 |
+| 13 | std.error |   2017 | 0.00482191 |
+| 14 | statistic |   2017 | 1.66612    |
+| 15 | p.value   |   2017 | 0.0958478  |
+
 ![Plot 1](pictures/political_features.png)
 
 The models found no positive correlations between political inclination of a county and the number of deaths due to gun violence.
 
-### Conclusions
+### Residuals
+
+Residuals from each year are shown below.
+
+![Plot 1](pictures/residuals_2014.png)
+![Plot 1](pictures/residuals_2015.png)
+![Plot 1](pictures/residuals_2016.png)
+![Plot 1](pictures/residuals_2017.png)
+
+It is fairly clear from first glance that the residuals are not normally distributed. The residuals take large positive values as predictions become large, showing that the models are under predicting for counties with
+high gun deaths per 100k.
+
+The non-normality of the residuals suggests non-linearity or other independent variables at play, as described in the methodology limitations section.
+
+## Conclusions
 
 The following conclusions can be drawn from the above results.
 
@@ -162,16 +286,18 @@ While poverty had a clear impact on gun violence, other economic and education f
 
 All variables that were found to be statistically significant remained so in the 4 years modeled in this study. This suggests that factors contributing to gun violence in the US are consistent, with any underlying changes happening slowly, on time period much longer than this analysis.
 
-## Final Thoughts
+**6. There are other effects this model is failing to capture.**
+
+The non-normality of the residuals points towards non-linearity or other independent variables at play.
+
+### Final Thoughts
 
 Finally, I would like to say a few words about this subject and myself. I understand that gun violence in the US is a contentious subject, with strong opinions on all sides of the political spectrum.
 
-I also acknowledge that it's near impossible to completely separate one's biases when studying an issue like this. I can, however, at least be open and transparent about my biases and let the readers make their own decisions based on the quality of the content presented here. I am someone who believes fairly strongly in the 2nd amendment while also acknowledging that deaths from gun violence in the US is far to high for society to accept.
+I also acknowledge that it is near impossible to completely separate one's biases when studying an issue like this. I can, however, at least be transparent about my own biases and let the readers make up their own mind based on the quality of the data and analysis presented. I am someone who believes fairly strongly in 2nd amendment rights, and that these rights necessarily come at a social cost. At the same time, I believe much can be done to reduce gun violence in the US.
 
 ### Acknowledgements
 
 I would like to thank the following people for giving their thoughts and feedback on this project:
-
-
 
 ## References
