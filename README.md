@@ -74,7 +74,7 @@ The resulting model coefficients and their p-values were plotted over time, year
 For county $i$ in year $j$, number of people killed from gun violence per 100k is the following:
 
 $$
-\hat{y}_{i, j} = \alpha_j + \beta_j x_{i, j}
+y_{i, j} = \alpha_j + \beta_j x_{i, j}
 $$
 
 Where
