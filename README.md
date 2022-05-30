@@ -71,7 +71,7 @@ In order to analyze how the importance of the above features changed over time (
 
 The resulting model coefficients and their p-values were plotted over time, year to year.
 
-For county $$i$$ in year $$j$$, number of people killed from gun violence per 100k is the following using linear regression:
+For county $i$ in year $j$, number of people killed from gun violence per 100k is the following:
 
 $$
 \hat{y}_{i, j} = \alpha_j + \beta_j x_{i, j}
