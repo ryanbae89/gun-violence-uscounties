@@ -1,6 +1,8 @@
 ---
 title: "2. Modeling"
 output: html_notebook
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r}
@@ -67,7 +69,7 @@ for(year in years) {
   title_str <- sprintf("Residuals Plot (%d)", year)
   # plot and save as png
   png(file=sprintf("pictures/residuals_%d.png", year))
-  plot(gunviol_data$killed_per_100k, model.res, 
+  plot(gunviol_data$killed_per_100k, model_gunviol$residuals, 
       ylab="Residuals", xlab="Deaths per 100k", 
        main=title_str)
   abline(0, 0)  
@@ -76,53 +78,14 @@ for(year in years) {
 
 ```
 
-
 ```{r}
-# mass shooting modeling
-
-# load data
-gunviol_data <- read_csv(sprintf('data/complete/GunViolenceByCounty_%d.csv', year))
-mass_model = list()
-  
-# drop rows with NA's
-gunviol_data <- gunviol_data[complete.cases(gunviol_data), ]
-gunviol_data[!complete.cases(gunviol_data), ]
-  
-# filter to counties with certain amount of popoulation
-gunviol_data <- gunviol_data[gunviol_data$TOT_POP >= 0, ]
-  
-# print columns and row counts
-names(gunviol_data)
-nrow(gunviol_data)
-
-# fit model for predicting mass shooting events
-model_mass_gunviol = glm(mass_shootings_per_100k ~ 
-                         PVI_2016 + 
-                         perc_NHWA + 
-                         perc_NHNA + 
-                         perc_NHBA + 
-                         perc_HISP + 
-                         Edu_perc_NoHS + 
-                         Econ_perc_poverty + 
-                         Unemployment_rate, 
-                         data=gunviol_data, weights=TOT_POP) 
-summary(model_mass_gunviol)
-
-# save model output
-mass_model = append(mass_model, tidy(model_mass_gunviol))
-  
-# get residuals
-mass_model.res = resid(model_mass_gunviol)
-plot(gunviol_data$mass_shootings_per_100k, model.res, 
-     ylab="Residuals", xlab="Deaths per 100k", 
-     main="Residuals Plot")
-abline(0, 0)  
+# check predictions
+row_num <- 1100
+gunviol_data[row_num,]
+predict(model_gunviol, newdata=gunviol_data[row_num,], type='response')
 ```
 
 ```{r}
 # save model output
 write.csv(models,"data/models/model_weights.csv", row.names = FALSE)
-write.csv(mass_model,"data/models/mass_model_weights.csv", row.names = FALSE)
 ```
-
-

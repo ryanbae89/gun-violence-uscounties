@@ -103,7 +103,7 @@ $$
 
 This study, like all others, has limitations:
 
-* Limits due to lack of data - Several dimensions listed above were not modeled in this study due to their lack of data. They include fairly important factors such as pravelence of guns, mental health issues, and geograpic.
+* Limits due to lack of data - Several dimensions listed above were not modeled in this study due to their lack of data. They include fairly important factors such as prevalence of guns, mental health issues, and geograpic.
 
 * Limits of methodology - The GLM proposed here have modeling limitations, such as assumption of linear relationship between the independent and dependent variables. Also, interaction effects were not modeled in this study to keep the models as simple as possible for interpretation of results.
 
@@ -265,7 +265,7 @@ The following conclusions can be drawn from the above results.
 
 **1. Gun violence in the US is largely a problem that affects African American community. This at least in part related to poverty, which is correlated with African American community presence.**
 
-The two most statistically significant variables with positive coefficient values from the generalized linear models were percentage of population non-hispanic black and percentage of population living below poverty. The two variable are also correlated, as poverty is much more pravelent among African American community.
+The two most statistically significant variables with positive coefficient values from the generalized linear models were percentage of population non-hispanic black and percentage of population living below poverty. The two variable are also correlated, as poverty is much more prevalent among African American community.
 
 The underlying reasons for this are beyond the scope of this study, but one can reason based on several commonly known issues that specifically affect the African American community, including but not limited to:
 
