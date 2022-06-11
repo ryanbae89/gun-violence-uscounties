@@ -63,6 +63,25 @@ All features were converted into percentages, with the exception of the PVI. How
 
 The actual gun violence data came from [Kaggle](https://www.kaggle.com/datasets/jameslko/gun-violence-data), and contain over 260k gun violence incidents from 2013 - 2018.
 
+### Feature Correlation
+
+When doing this kind of modeling exercise, one thing to look out for is presence of multicollinearity. Feature correlation matrix, which is simply a matrix of correlation coefficients between each feature, can identify presence of multicollinearity. They are shown in plots below, for each year:
+
+![Plot 1](pictures/corr_matrix_2014.png)
+
+![Plot 1](pictures/corr_matrix_2015.png)
+
+![Plot 1](pictures/corr_matrix_2016.png)
+
+![Plot 1](pictures/corr_matrix_2017.png)
+
+First thing to note is that there isn't a large variation of the correlation coefficients from year to year. The next observation is that none of the features are highly correlated (> 0.7). The most closely correlated features are the following:
+
+* **Econ_perc_poverty** with **Edu_perc_NoHS** and **Unemployment_rate**
+* **perc_NHBA** with **Econ_perc_poverty**
+
+However, none of them show high correlation, as the correlation coefficients are all below 0.7, which is a typical value used to determine presence of multicollinearity.
+
 ### Modeling
 
 The modeling approach used was to try to predict the number of people killed in each county using a simple linear regression. The gun violence dataset was aggregated to calculate the number of people killed in each county. Also, to account for the population differences in each county, each data point (county) was weighted by its population.
@@ -247,17 +266,26 @@ The models found no positive correlations between political inclination of a cou
 
 ### Residuals
 
-Residuals from each year are shown below.
+Residuals from the model each year are shown below.
 
 ![Plot 1](pictures/residuals_2014.png)
+
 ![Plot 1](pictures/residuals_2015.png)
+
 ![Plot 1](pictures/residuals_2016.png)
+
 ![Plot 1](pictures/residuals_2017.png)
 
-It is fairly clear from first glance that the residuals are not normally distributed. The residuals take large positive values as predictions become large, showing that the models are under predicting for counties with
-high gun deaths per 100k.
+It is fairly clear from first glance that the residuals are not normally distributed. There are several points to note from these plots:
 
-The non-normality of the residuals suggests non-linearity or other independent variables at play, as described in the methodology limitations section.
+* There is a cluster of residuals (vertical line at x=0) with negative values with counties that had 0 gun deaths. This is due to the predictions being small positive number for these counties.
+
+* The residuals seem to monotonically increase as the x-axis increases. This shows the models are significantly under predicting for counties with high gun deaths.  
+
+The non-normality of the residuals suggests the following:
+
+* Non-linearity in the relationships between the dependent and the independent variable, or
+* There could be missing independent variables, as described in the methodology limitations section.
 
 ## Conclusions
 
@@ -288,7 +316,7 @@ All variables that were found to be statistically significant remained so in the
 
 **6. There are other effects this model is failing to capture.**
 
-The non-normality of the residuals points towards non-linearity or other independent variables at play.
+As stated in the methodology limitations section, several potential factors such as prevalence of guns, geograpical features, etc. The non-normality of the residuals also supports this, while also pointing out potential non-linearity in the relationship between the independent and the dependent variables.
 
 ### Final Thoughts
 
